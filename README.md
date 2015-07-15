@@ -1,2 +1,2 @@
 # JavaPoli
-A JavaScript CommandLine-based Monopoly-clone
+A JavaScript CommandLine-Like Monopoly-clone
