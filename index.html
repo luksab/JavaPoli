@@ -9,7 +9,7 @@ ul {
 }
 </style>
 </head>
-<body id="body"style="text-align: center; font-size: 12px; background-color: #333; color: green; font-family: 'Lucida Console', Monaco, monospace">
+<body id="body"style="text-align: center; font-size: 12px; background-color: #333; color: lightgreen; font-family: 'Lucida Console', Monaco, monospace">
 <div style="display: block; width: 600px; height: 600px; margin-left: auto; margin-right: auto; ">
 <ul id="gametext" style="width: 100%; height: 50%; overflow: auto; text-align: left; border: 1px solid black;  background-color: #000000; ">
 
@@ -40,7 +40,7 @@ var q = {},
 		],
 	game.html = "",
 	game.players = [],
-	game.dmoney = 131248957,
+	game.dmoney = 1000,
 	game.currentPlayer = 0;
 	var allowed_funcs = ["step", "go", "exit", "restart", "give up", "buy", "sell", "money", "streets", "mystreets"];
 	q.initPlayerNum = function(input) {
@@ -128,15 +128,11 @@ var q = {},
 				var Rent =  field.rent[field.status];
 				this.updateHtml("<li>"+game.players[game.currentPlayer].name +" pays "+game.players[field.player].name +" "+ Rent +" €</li>")
 				game.currentPlayer.money -= Rent;
-				if (game.players[game.currentPlayer].money <= 1){
-					this.updateHtml("<li>"+game.players[game.currentPlayer].name +" lost </li>");
-					this.updateHtml("<li>Game restarts....</li>");
-					document.getElementById("cmd").disabled = true;
-					setTimeout(function() { location.reload(); }, 1000 );
-				}
-				game.players[field.player].money += Rent;
+				game.players[field.player].money += Rent;				
 			}
-			this.nextPlayer();
+			if(this.checkMoney()) {
+				this.nextPlayer();
+			}
 		} 
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// Kauf ? +++++++++++++++++++++++++++++++++++++++++++++++++
@@ -155,14 +151,31 @@ var q = {},
 			this.updateHtml("<li>You have "+game.players[game.currentPlayer].money+" € left </li>");
 		}
 		currentCallback = "parseCommand";
-		this.nextPlayer();
+		if (this.checkMoney()) {
+			this.nextPlayer();
+		}		
+	},
+	q.checkMoney = function() {
+		if(game.players[game.currentPlayer].money < 0) {
+			this.updateHtml("<li>"+game.players[game.currentPlayer].name+" lost!</li>");
+			
+			currentCallback="restart";
+			this.updateHtml("<li> press any key to restart thö game </li>");
+			return false;
+		}
+		return true;
+	},
+	q.restart=function(input){
+			location.reload()
 	},
 	q.nextPlayer = function() {
-		if(game.currentPlayer < game.players.length - 1) {
-			game.currentPlayer ++;
-		} else {
-			game.currentPlayer = 0;
-		}
+		
+			if(game.currentPlayer < game.players.length - 1) {
+				game.currentPlayer ++;
+			} else {
+				game.currentPlayer = 0;
+			}
+		
 	},
 	q.is_allowed = function(cmd) {
 		if(allowed_funcs.indexOf(cmd) !== -1) {
@@ -192,6 +205,7 @@ var q = {},
 			if (ev.keyCode === 13)
 			self._parseInput(document.getElementById("cmd").value);
 		});
+		document.getElementById('cmd').focus();
 	},
 	q._parseInput = function(input) {
 		// mach was mit dem Input
@@ -207,7 +221,6 @@ var q = {},
 		el.innerHTML = game.html;
 		el.scrollTop = el.scrollHeight;		
 	};
-
 return q;
 })();
 Javapoli.init();
