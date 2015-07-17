@@ -183,13 +183,17 @@ var q = {},
 	},
 	q.wantMore = function(input) {
 		currentCallback = "parseCommand";
-		if(input != "y" && input != "yes") {
-			can_move = true;
-			this.nextPlayer();
-			this.updateHtml("<li>OK - " + game.players[game.currentPlayer].name + " is now playing his next step!'</li>");
-		} else {
+		if(input == "y" || input == "yes") {
 			can_move = false;	
 			this.updateHtml("<li>OK, waiting for your next command!</li>");
+		} 
+		else if(input == "n" || input == "no"){
+			can_move = true;
+			this.nextPlayer();
+			this.updateHtml("<li>OK - " + game.players[game.currentPlayer].name + " is now playing his next step!'</li>");			
+		}
+		else if (this.is_allowed(input.split(":")[0])){
+			this.parseCommand(input);
 		}
 	},
 	q.checkMoney = function() {
