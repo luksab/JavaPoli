@@ -193,6 +193,7 @@ var q = {},
 			this.updateHtml("<li>OK - " + game.players[game.currentPlayer].name + " is now playing his next step!'</li>");			
 		}
 		else if (this.is_allowed(input.split(":")[0])){
+			can_move=false;
 			this.parseCommand(input);
 		}
 	},
