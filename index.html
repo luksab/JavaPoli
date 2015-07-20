@@ -35,25 +35,35 @@ var q = {},
 	oldT = 10000,
 	game = {};
 	game.fields = [
-		{name: "Start field", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: null, group_factor: 2},
-		{name: "Donau Street", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
-		{name: "Rhine Street", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8.000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
-		{name: "Urban Market", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Tree Alley", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Airport North", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Ford Plaza", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
-		{name: "Eastern Pathway", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
-		{name: "Millenium Drive", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
-		{name: "Park Alley", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
-		{name: "Seven Oaks", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
-		{name: "Castle Road", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
-		{name: "Mountain View", price: 4000, callback: "_streetFieldLanding", player: null, hypo: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2}
+		{name: "Start field", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: null, group_factor: 2},
+		{name: "Donau Street", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
+		{name: "Rhine Street", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8.000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
+		{name: "Urban Market", price: 4000, callback: "_streetFieldLanding", player: null, credit: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
+		{name: "Tree Alley", price: 4000, callback: "_streetFieldLanding", player: null, credi: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
+		{name: "Airport North", price: 4000, callback: "_streetFieldLanding", player: null, credit: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
+		{name: "Ford Plaza", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
+		{name: "Eastern Pathway", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
+		{name: "Millenium Drive", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
+		{name: "Park Alley", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
+		{name: "Seven Oaks", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
+		{name: "Castle Road", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
+		{name: "Mountain View", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2}
 		],
 	game.html = "",
 	game.players = [],
 	game.dmoney = 150000,
-	game.currentPlayer = 0;
-	var allowed_funcs = ["step", "go", "exit", "restart", "give up", "buy", "sell", "money", "streets", "mystreets"];
+	game.currentPlayer = 0,
+	allowed_funcs = ["step", "go", "exit", "buy", "sell", "money", "streets", "credit", "commands"],
+	game.funcDesc = {
+		step: 		"step lets you roll the dice and advance the respecive street fields.",
+		go:			"go is an alias for step.",
+		exit: 		"exit starts a new game",
+		buy:		"buy:street,vendor,price  lets you buy a street of another player.",
+		sell:		"sell:street,buyer,price  lets you sell a street to another player",
+		money:		"money shows the respective earned or remaining game currency of each player",
+		streets:	"streets:own  lets you see street posessions of each player (no : plus parameter) or your own (: plus own)",
+		credit:		"credit:street lets you turn the chosen street into money. You cannot get paid for landings on this street though while credited."
+	};
 	q.initPlayerNum = function(input) {
 		if(	isNaN(parseInt(input)) ) {
 			return this.updateHtml( "<li>"+input + "</li><li>Please type an integer number...!</li>" );
@@ -63,6 +73,31 @@ var q = {},
 		}
 		currentCallback = "setPlayerNames";
 		return this.updateHtml( input + "<li>Please add the Player Names ("+input+" names), comma-separated.</li>" );
+	},
+	q.commands = function() {
+		for (var key in game.funcDesc) {
+			this.updateHtml("<li>"+game.funcDesc[key]+"</li>");
+		}
+		this.checkIfMore();
+	},
+	q.credit = function(arguments) {
+		var street;
+		if( arguments.length ) {
+			street = arguments[0];
+			if(isNaN(parseInt(street))) {
+				street = this.getStreetIndexFromName(street);
+				if(street === false) return this.updateHtml("<li>The street does not exists, please try again!</li>");
+			}		
+			if(street < 0 || street > game.fields.length -1) return this.updateHtml("<li>The street index you typed is not existing</li>");
+			if(game.fields[street].player != game.currentPlayer) return this.updateHtml("<li>You do not own this street... no credit on it. Ty another!</li>");
+			if(game.fields[street].status == "credit") return this.updateHtml("<li>The street is already credited. Please choose another!</li>");
+			game.players[game.currentPlayer].money += game.fields[street].credit;
+			game.fields[street].status = "credit";
+			this.updateHtml("<li>The bank has provided you "+game.fields[street].credit+"€ for "+game.fields[street].name+"</li>");
+			this.checkIfMore();
+		} else {
+			this.updateHtml("<li>Please use the credit function with the syntax credit:[street], where street is either the name or index of the field you want to turn into credit.</li>")
+		}
 	},
 	q.sell = function(arguments) {
 		var street, buyer, price, street_validated = true, buyer_validated = true, price_validated = true, errors = [];
@@ -271,7 +306,7 @@ var q = {},
 			console.log("currentPlayer: " + game.currentPlayer + " field.player: "+field.player);
 			if (game.currentPlayer != field.player) {
 				// the currentPlayer has to pay rent to field.player if no hypoteque is on the street
-				if (field.status != "hypotheque") {
+				if (field.status != "credit") {
 					var gFactor = this.getGroupFactor(index);
 					var rent =  field.rent[field.status] * gFactor;
 					this.updateHtml("<li>"+game.players[game.currentPlayer].name +" pays "+game.players[field.player].name +" "+ rent +" €</li>");
@@ -282,7 +317,7 @@ var q = {},
 						this.checkIfMore();
 					}
 				} else {
-					this.updateHtml("<li>The field is currently used for hypotheque. No fees apply for landing here.</li>");
+					this.updateHtml("<li>The field is currently used for a credit. No fees apply for landing here.</li>");
 					this.checkIfMore();
 				}
 			} else {
@@ -388,7 +423,7 @@ var q = {},
 	},
 	q.init = function() {
 	var self = this;
-		this.updateHtml( "<li>Welcome to Javapoli!</li><li>How many of you are there?</li>" );
+		this.updateHtml( "<li>Welcome to Javapoli!<br/>If you get stuck type 'commands' without quotation marks to get instructions.</li><li>How many of you are there?</li>" );
 		document.getElementById("body").addEventListener("keypress", function(ev){
 			if (ev.keyCode === 13)
 			self._parseInput(document.getElementById("cmd").value);
@@ -408,14 +443,17 @@ var q = {},
 		}		
 	},
 	q.scrollIt = function(){
+		var self = this;
 		var el = document.getElementById('gametext');
 		var curT = new Date().getTime();
 		var d = curT - oldT;
-		var hd = el.scrollHeight - el.offsetHeight;
-			if (el.scrollTop != hd) {
-				el.scrollTop += d < 15 ? Math.floor(d * 0.5) : 1;
+		var hd = el.scrollHeight - el.offsetHeight, 
+		dhd = hd - el.scrollTop; 
+			if (dhd > 0) {
+				el.scrollTop += 1;
+				el.scrollTop += dhd > 150 ? 10 : 0;
 				oldT = curT;
-				setTimeout(Javapoli.scrollIt, 10);			
+				setTimeout(function() { self.scrollIt(); }, 10 - (d < 10 ? d : 0));			
 			}		
 	},
 	q.updateHtml = function(text) {
