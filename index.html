@@ -27,34 +27,24 @@ ul li {
 your command:
 <input type="text" id="cmd" style="width: 400px; color: green; font-family: 'Lucida Console', Monaco, monospace; background-color: #000000; border:none;">
 </div>
+<script type="text/javascript" src="javapolistreet.js"></script>
+<script type="text/javascript" src="streets.js"></script>
 <script type="text/javascript">
 var Javapoli = (function(){
 var q = {},
+	self = this,
 	currentCallback = "initPlayerNum",
 	can_move = true,
-	oldT = 10000,
-	game = {};
-	game.fields = [
-		{name: "Start field", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: null, group_factor: 2},
-		{name: "Donau Street", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
-		{name: "Rhine Street", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8.000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 1, group_factor: 2},
-		{name: "Urban Market", price: 4000, callback: "_streetFieldLanding", player: null, credit: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Tree Alley", price: 4000, callback: "_streetFieldLanding", player: null, credi: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Airport North", price: 4000, callback: "_streetFieldLanding", player: null, credit: 9000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 2, group_factor: 2},
-		{name: "Ford Plaza", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
-		{name: "Eastern Pathway", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 3, group_factor: 2},
-		{name: "Millenium Drive", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
-		{name: "Park Alley", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 4, group_factor: 2},
-		{name: "Seven Oaks", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
-		{name: "Castle Road", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2},
-		{name: "Mountain View", price: 4000, callback: "_streetFieldLanding", player: null, credit: 8000, rent: {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, status: "plain", group: 5, group_factor: 2}
-		],
-	game.html = "",
-	game.players = [],
-	game.dmoney = 150000,
-	game.currentPlayer = 0,
-	allowed_funcs = ["step", "go", "exit", "buy", "sell", "money", "streets", "credit", "commands"],
-	game.funcDesc = {
+	stepped = false,
+	oldT = 10000;
+	q.game = {},
+	q.game.fields = [];
+	q.game.html = "";
+	q.game.players = [],
+	q.game.dmoney = 150000,
+	q.game.currentPlayer = 0,
+	q.game.allowed_funcs = ["step", "go", "exit", "buy", "sell", "money", "streets", "credit", "commands"],
+	q.game.funcDesc = {
 		step: 		"step lets you roll the dice and advance the respecive street fields.",
 		go:			"go is an alias for step.",
 		exit: 		"exit starts a new game",
@@ -63,7 +53,11 @@ var q = {},
 		money:		"money shows the respective earned or remaining game currency of each player",
 		streets:	"streets:own  lets you see street posessions of each player (no : plus parameter) or your own (: plus own)",
 		credit:		"credit:street lets you turn the chosen street into money. You cannot get paid for landings on this street though while credited."
+	},
+	q.game.isAllowedStreetCallback = function() {
+		return true;
 	};
+
 	q.initPlayerNum = function(input) {
 		if(	isNaN(parseInt(input)) ) {
 			return this.updateHtml( "<li>"+input + "</li><li>Please type an integer number...!</li>" );
@@ -75,8 +69,8 @@ var q = {},
 		return this.updateHtml( input + "<li>Please add the Player Names ("+input+" names), comma-separated.</li>" );
 	},
 	q.commands = function() {
-		for (var key in game.funcDesc) {
-			this.updateHtml("<li>"+game.funcDesc[key]+"</li>");
+		for (var key in this.game.funcDesc) {
+			this.updateHtml("<li>"+this.game.funcDesc[key]+"</li>");
 		}
 		this.checkIfMore();
 	},
@@ -88,12 +82,12 @@ var q = {},
 				street = this.getStreetIndexFromName(street);
 				if(street === false) return this.updateHtml("<li>The street does not exists, please try again!</li>");
 			}		
-			if(street < 0 || street > game.fields.length -1) return this.updateHtml("<li>The street index you typed is not existing</li>");
-			if(game.fields[street].player != game.currentPlayer) return this.updateHtml("<li>You do not own this street... no credit on it. Ty another!</li>");
-			if(game.fields[street].status == "credit") return this.updateHtml("<li>The street is already credited. Please choose another!</li>");
-			game.players[game.currentPlayer].money += game.fields[street].credit;
-			game.fields[street].status = "credit";
-			this.updateHtml("<li>The bank has provided you "+game.fields[street].credit+"€ for "+game.fields[street].name+"</li>");
+			if(street < 0 || street > this.game.fields.length -1) return this.updateHtml("<li>The street index you typed is not existing</li>");
+			if(this.game.fields[street].getPlayer() != this.game.currentPlayer) return this.updateHtml("<li>You do not own this street... no credit on it. Ty another!</li>");
+			if(this.game.fields[street].getStatus() == "credit") return this.updateHtml("<li>The street is already credited. Please choose another!</li>");
+			this.game.players[this.game.currentPlayer].money += this.game.fields[street].getCredit();
+			this.game.fields[street].setStatus("credit");
+			this.updateHtml("<li>The bank has provided you "+this.game.fields[street].getCredit()+"€ for "+this.game.fields[street].getName()+"</li>");
 			this.checkIfMore();
 		} else {
 			this.updateHtml("<li>Please use the credit function with the syntax credit:[street], where street is either the name or index of the field you want to turn into credit.</li>")
@@ -130,13 +124,13 @@ var q = {},
 			street_validated = false;
 		} else {
 			street = parseInt(street);
-			if(street < 0 || street > game.fields.length - 1) {
+			if(street < 0 || street > this.game.fields.length - 1) {
 				errors.push("The street index you typed is not exisiting.");
 				street_validated = false;
 			}
 		}
 		
-		if ( street_validated && game.fields[street].player != game.currentPlayer ) {
+		if ( street_validated && this.game.fields[street].getPlayer() != this.game.currentPlayer ) {
 			errors.push("You don't own this field.");
 		}
 		
@@ -146,12 +140,12 @@ var q = {},
 			buyer_validated = false;
 		} else {
 			buyer = parseInt(buyer);
-			if(buyer < 0 || buyer > game.players.length - 1) {
+			if(buyer < 0 || buyer > this.game.players.length - 1) {
 				buyer_validated = false;
 				errors.push("The buyer index you typed does not exists.");
 			}
 		}
-		if ( buyer_validated && game.players[buyer] == game.players[game.currentPlayer] ) {
+		if ( buyer_validated && this.game.players[buyer] == this.game.players[this.game.currentPlayer] ) {
 			errors.push("You can't sell to your own.");
 		}
 		
@@ -159,14 +153,14 @@ var q = {},
 			this.updateHtml("<li>Cannot meaningfully parse your input:</li>");
 			this.updateHtml("<li>"+errors.join(',')+"</li>");
 		 } else {
-			if( confirm(game.players[buyer].name + ", do you really want to buy "+game.fields[street].name+" for " +price+"?"))
+			if( confirm(this.game.players[buyer].name + ", do you really want to buy "+this.game.fields[street].getName()+" for " +price+"?"))
 			{
-				game.players[buyer].money -= price;
-				game.players[game.currentPlayer].money += price;
-				game.fields[street].player = buyer;
+				this.game.players[buyer].money -= price;
+				this.game.players[this.game.currentPlayer].money += price;
+				this.game.fields[street].setPlayer(buyer);
 				if (this.checkMoney(buyer)) {
-					this.updateHtml("<li>Sold! "+game.players[buyer].name+" has €"+game.players[buyer].money+" left"
-					+" and "+game.players[game.currentPlayer].name+" has €"+game.players[game.currentPlayer].money+" left.</li>");
+					this.updateHtml("<li>Sold! "+this.game.players[buyer].name+" has €"+this.game.players[buyer].money+" left"
+					+" and "+this.game.players[this.game.currentPlayer].name+" has €"+this.game.players[this.game.currentPlayer].money+" left.</li>");
 					this.checkIfMore();
 				}
 			} else {
@@ -177,8 +171,8 @@ var q = {},
 	},
 	q.getStreetIndexFromName = function(name) {
 		var exists = false;
-		for (var k = 0; k < game.fields.length; k++) {
-			if(game.fields[k].name == name) {
+		for (var k = 0; k < this.game.fields.length; k++) {
+			if(this.game.fields[k].getName() == name) {
 				exists = true;
 				break;
 			}
@@ -188,8 +182,8 @@ var q = {},
 	},
 	q.getPlayerIndexFromName = function(name) {
 		var exists = false;
-		for (var k = 0; k < game.players.length; k++) {
-			if(game.players[k].name == name) {
+		for (var k = 0; k < this.game.players.length; k++) {
+			if(this.game.players[k].name == name) {
 				exists = true;
 				break;
 			}
@@ -199,8 +193,8 @@ var q = {},
 	},
 	q.setPlayerNames = function(names) {
 		var sep_names = names.split(",");
-		if ( sep_names.length != game.players.length) {
-			this.updateHtml("You need " + game.players.length + " Names, but provided " + sep_names.length + "!");
+		if ( sep_names.length != this.game.players.length) {
+			this.updateHtml("You need " + this.game.players.length + " Names, but provided " + sep_names.length + "!");
 		} else {
 			for(var i = 0; i < sep_names.length; i++) {
 				this.setPlayerName(i, sep_names[i]);
@@ -212,23 +206,23 @@ var q = {},
 	q.step = function(){
 		if(can_move) {
 			var eyes = this.rollDice();
-			console.log("Current Player:" + game.currentPlayer);
-			this.updateHtml("<li> player "+ game.players[game.currentPlayer].name + " advances " + eyes + " fields</li>");
-			var pos = game.players[game.currentPlayer].position + eyes;
-			if (pos > game.fields.length - 1){
-				pos = pos - game.fields.length;		
+			stepped = true;
+			this.updateHtml("<li> player "+ this.game.players[this.game.currentPlayer].name + " advances " + eyes + " fields</li>");
+			var pos = this.game.players[this.game.currentPlayer].position + eyes;
+			if (pos > this.game.fields.length - 1){
+				pos = pos - this.game.fields.length;		
 				if (pos > 0) {
-					game.players[game.currentPlayer].money += 2000000;
+					this.game.players[this.game.currentPlayer].money += 2000000;
 					this.updateHtml("<li>you just earned 2000000 € due to passing the start field.</li>")
 				}
 			}
 			if(pos === 0) {
-				game.players[game.currentPlayer].money += 4000000;
+				this.game.players[this.game.currentPlayer].money += 4000000;
 				this.updateHtml("<li>you just earned 4000000 € due to landing on the start field.</li>")
 			}
-			this.updateHtml("<li> he lands on "+game.fields[pos].name);
-			game.players[game.currentPlayer].position = pos;
-			var callback = game.fields[pos].callback;
+			this.updateHtml("<li> he lands on "+this.game.fields[pos].getName());
+			this.game.players[this.game.currentPlayer].position = pos;
+			var callback = this.game.fields[pos].getCallback();
 			this[callback]();
 		} else {
 			this.updateHtml("<li>You are not allowed to move twice...</li>");
@@ -236,11 +230,11 @@ var q = {},
 		}
 	},
 	q.addPlayer = function() {
-		game.players.push({ name: "default", money: game.dmoney, position: 0 });
+		this.game.players.push({ name: "default", money: this.game.dmoney, position: 0 });
 	},
 	q.money = function() {
-		for(var i = 0 ; i < game.players.length ; i++){
-			this.updateHtml("<li>"+game.players[i].name+" has "+game.players[i].money+" € </li>");
+		for(var i = 0 ; i < this.game.players.length ; i++){
+			this.updateHtml("<li>"+this.game.players[i].name+" has "+this.game.players[i].money+" € </li>");
 		};
 		this.checkIfMore();
 	},
@@ -250,45 +244,45 @@ var q = {},
 	q.streets = function() {		
 		if(arguments.length && arguments[0] == "own") {
 			var str_eets = [], owns = false;
-			for (var k = 0; k < game.fields.length; k++) {
-				if(game.fields[k].player == game.currentPlayer) {
+			for (var k = 0; k < this.game.fields.length; k++) {
+				if(this.game.fields[k].getPlayer() == this.game.currentPlayer) {
 					owns = true;
-					str_eets.push( game.fields[k].name + " ("+k+" - "+game.fields[k].status+")");
+					str_eets.push( this.game.fields[k].getName() + " ("+k+" - "+this.game.fields[k].getStatus()+")");
 				}
 			}
 		this.updateHtml("<li>You own: " + ( owns ? str_eets.join(" + ") : " nothing" ) + "</li>")			
 		} else {
-			for(var i = 0; i < game.players.length; i++) {
+			for(var i = 0; i < this.game.players.length; i++) {
 			var str_eets = [], owns = false;
-				for(var k = 0; k < game.fields.length; k++) {
-					if(game.fields[k].player == i) {
+				for(var k = 0; k < this.game.fields.length; k++) {
+					if(this.game.fields[k].getPlayer() == i) {
 						owns = true;
-						str_eets.push( game.fields[k].name + " ("+k+" "+game.fields[k].status+")" );
+						str_eets.push( this.game.fields[k].getName() + " ("+k+" "+this.game.fields[k].getStatus()+")" );
 					}
 				}
-			this.updateHtml("<li>" + game.players[i].name + " owns: " + ( owns ? str_eets.join(" + ") : " nothing" ) + "</li>");
+			this.updateHtml("<li>" + this.game.players[i].name + " owns: " + ( owns ? str_eets.join(" + ") : " nothing" ) + "</li>");
 			}	
 		}			
 		this.checkIfMore();
 	},
 	q.setPlayerName = function(index, name) {
-		game.players[index].name = name;
+		this.game.players[index].name = name;
 		this.updateHtml("<li>Player "+index+" set to "+name+"</li>");
 	},
 	q.getNumPlayers = function() {
-		return game.players.length;
+		return this.game.players.length;
 	},
 	q.rollDice = function() {		
 		return ( Math.floor(Math.random() * 6) + 1 ) + ( Math.floor(Math.random() * 6) + 1 );
 	},
 	q.getGroupFactor = function(index) {
-		var l = game.fields.length,
-			group = game.fields[index].group,
+		var l = this.game.fields.length,
+			group = this.game.fields[index].getGroup(),
 			is_grouped = true,
-			ownerIndex = game.fields[index].player;
+			ownerIndex = this.game.fields[index].getPlayer();
 		for (var i = 0; i < l; i++) {
-			if(game.fields[i].group == group) {
-				if( game.fields[i].player != ownerIndex ) 				
+			if(this.game.fields[i].getGroup() == group) {
+				if( this.game.fields[i].player != ownerIndex ) 				
 				{
 					is_grouped = false;
 					break;
@@ -296,23 +290,21 @@ var q = {},
 			}
 		}
 		if(!is_grouped) return 1;
-		return game.fields[index].group_factor;
+		return this.game.fields[index].getGroupFactor();
 	},
 	q._streetFieldLanding = function() {
-		var index = game.players[game.currentPlayer].position;
-		var field = game.fields[index];
+		var index = this.game.players[this.game.currentPlayer].position;
+		var field = this.game.fields[index];
 		// pay rent ? +++++++++++++++++++++++++++++++++++++++++++++++++++
-		if (index > 0 && field.player !== null) { // 0 is the start field which can't be purchased
-			console.log("currentPlayer: " + game.currentPlayer + " field.player: "+field.player);
-			if (game.currentPlayer != field.player) {
-				// the currentPlayer has to pay rent to field.player if no hypoteque is on the street
-				if (field.status != "credit") {
+		if (index > 0 && field.getPlayer() !== null) { // 0 is the start field which can't be purchased
+			if (this.game.currentPlayer != field.getPlayer()) {
+				if (field.getStatus() != "credit") {
 					var gFactor = this.getGroupFactor(index);
-					var rent =  field.rent[field.status] * gFactor;
-					this.updateHtml("<li>"+game.players[game.currentPlayer].name +" pays "+game.players[field.player].name +" "+ rent +" €</li>");
-					if(gFactor > 1) this.updateHtml("<li>"+game.players[field.player].name+" has all streets of this group, so the rent was raised by the factor "+gFactor+"</li>");
-					game.currentPlayer.money -= rent;
-					game.players[field.player].money += rent;
+					var rent =  field.getRent();
+					this.updateHtml("<li>"+this.game.players[this.game.currentPlayer].name +" pays "+this.game.players[field.player].name +" "+ rent +" €</li>");
+					if(gFactor > 1) this.updateHtml("<li>"+this.game.players[field.player].name+" has all streets of this group, so the rent was raised by the factor "+gFactor+"</li>");
+					this.game.currentPlayer.money -= rent;
+					this.game.players[field.player].money += rent;
 					if(this.checkMoney()) {
 						this.checkIfMore();
 					}
@@ -329,7 +321,7 @@ var q = {},
 		else{
 			if(index > 0) {
 				currentCallback = "buyStreet";
-				this.updateHtml("<li> would you like to buy "+field.name+" for "+field.price+" € ?</li>");
+				this.updateHtml("<li> would you like to buy "+field.getName()+" for "+field.getPrice()+" € ?</li>");
 			} else {
 				this.checkIfMore();
 			}		
@@ -338,16 +330,16 @@ var q = {},
 		
 	},
 	q.checkIfMore = function() {
-		can_move = false;
+		if(stepped) can_move = false;
 		this.updateHtml("<li>Do you want to take more actions?</li>");
 		currentCallback = "wantMore";
 	},
 	q.buyStreet=function(input){
 		if(input == "y" || input == "yes"){
-			var field = game.fields[ game.players[ game.currentPlayer ].position ];
-			game.players[game.currentPlayer].money -= field.price;
-			field.player = game.currentPlayer;
-			this.updateHtml("<li>Purchased! You have "+game.players[game.currentPlayer].money+" € left </li>");
+			var field = this.game.fields[ this.game.players[ this.game.currentPlayer ].position ];
+			this.game.players[this.game.currentPlayer].money -= field.getPrice();
+			field.setPlayer( this.game.currentPlayer );
+			this.updateHtml("<li>Purchased! You have "+this.game.players[this.game.currentPlayer].money+" € left </li>");
 		} else {
 			this.updateHtml("<li>Not purchased!</li>");
 		}
@@ -359,27 +351,33 @@ var q = {},
 	q.wantMore = function(input) {
 		currentCallback = "parseCommand";
 		if(input == "n" || input == "no") {
+			stepped = false;
 			this.nextPlayer();
 			can_move = true;
-			this.updateHtml("<li>OK - " + game.players[game.currentPlayer].name + " is now playing his next step!'</li>");
+			this.updateHtml("<li>OK - " + this.game.players[this.game.currentPlayer].name + " is now playing his next step!'</li>");
 		} else if(this.is_allowed(input.split(":")[0])) {
-			can_move = false; // this is a double and can be removed if always using checkIfMore
+			if(stepped) can_move = false;
 			this.parseCommand(input);
 		} else {
-			can_move = false;	// this is a double and can be removed if always using checkIfMore
-			this.updateHtml("<li>OK, waiting for your next command!</li>");
+			if(stepped) can_move = false, cmd = input.split(":")[0];
+			if(cmd == "y" || cmd == "yes" ) {
+				this.updateHtml("<li>OK, waiting for your next command!</li>");
+			}
+			 else {
+				this.updateHtml("<li>Hm - treating this "+cmd+" as a yes, waiting for your next command!</li>");
+			 }
 		}
 	},
 	q.checkMoney = function() {
 	if(arguments.length) {
 		index = arguments[0];
 	} else {
-		index = game.currentPlayer;
+		index = this.game.currentPlayer;
 	}	
-		if(game.players[index].money < 0) {
-			this.updateHtml("<li>"+game.players[index].name+" lost!</li>");			
+		if(this.game.players[index].money < 0) {
+			this.updateHtml("<li>"+this.game.players[index].name+" lost!</li>");			
 			currentCallback="restart";
-			this.updateHtml("<li> press any key to restart the game </li>");
+			this.updateHtml("<li> press any key to restart the this.game </li>");
 			return false;
 		}
 		return true;
@@ -389,15 +387,15 @@ var q = {},
 	},
 	q.nextPlayer = function() {
 		
-			if(game.currentPlayer < game.players.length - 1) {
-				game.currentPlayer ++;
+			if(this.game.currentPlayer < this.game.players.length - 1) {
+				this.game.currentPlayer ++;
 			} else {
-				game.currentPlayer = 0;
+				this.game.currentPlayer = 0;
 			}
 		
 	},
 	q.is_allowed = function(cmd) {
-		if(allowed_funcs.indexOf(cmd) !== -1) {
+		if(this.game.allowed_funcs.indexOf(cmd) !== -1) {
 			return true;
 		} 
 		return false;
@@ -422,7 +420,12 @@ var q = {},
 			}	
 	},
 	q.init = function() {
-	var self = this;
+	var self = this, j = JavapoliImportedStreets;
+	for(var i = 0; i< j.length; i++) {
+		this.game.fields.push(new JavapoliStreet(self.game, j[i]));
+		//this.game.fields.push(new JavapoliStreet(self.game, j[i].name, j[i].price, j[i].callback, j[i].player, j[i].credit, j[i].rent, j[i].status, j[i].group, j[i].group_factor));
+	}
+	//this.game.fields = JavapoliImportedStreets;
 		this.updateHtml( "<li>Welcome to Javapoli!<br/>If you get stuck type 'commands' without quotation marks to get instructions.</li><li>How many of you are there?</li>" );
 		document.getElementById("body").addEventListener("keypress", function(ev){
 			if (ev.keyCode === 13)
@@ -433,6 +436,7 @@ var q = {},
 			this.focus();
 		});
 		document.getElementById('cmd').focus();
+		//var s = new JavapoliStreet(this.game, "Teststreet", 50000, "_streetFieldLanding", null, 40000, {plain: 10000, a1: 50000, a2: 100000, a3: 500000, a4: 1000000, h: 5000000}, "plain", 4, 4);
 	},
 	q._parseInput = function(input) {
 		// mach was mit dem Input
@@ -451,20 +455,23 @@ var q = {},
 		dhd = hd - el.scrollTop; 
 			if (dhd > 0) {
 				el.scrollTop += 1;
-				el.scrollTop += Math.floor(dhd/15);
+				el.scrollTop += Math.floor( dhd / 20 );
 				oldT = curT;
-				setTimeout(function() { self.scrollIt(); }, 10);			
-			}		
+				setTimeout(function() { self.scrollIt(); }, 10 - (d < 10 ? d : 0));
+//maybe a setInterval / clearInterval can do the trick with less overhead - try it out!				
+			} 
 	},
 	q.updateHtml = function(text) {
-		game.html += text;
+		this.game.html += text;
 		var el = document.getElementById("gametext");
-		el.innerHTML = game.html;
+		el.innerHTML = this.game.html;
 		this.scrollIt();	
 	};
 return q;
-})();
-Javapoli.init();
+})(JavapoliStreet);
+window.onload = function() {
+	Javapoli.init();
+}
 </script>
 </body>
 </html>
