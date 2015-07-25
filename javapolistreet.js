@@ -1,3 +1,6 @@
+(function(Javapoli) {
+	Javapoli = Javapoli || {};
+	Javapoli.streetDefs = Javapoli.streetDefs || {};
 var JavapoliStreet = function(game, obj) {
 	this.game = game; // OK - later on we should have some kind of check going on if we really get a game delivered
 	JavapoliStreet.prototype.setName.call(this, obj.name);
@@ -130,3 +133,8 @@ JavapoliStreet.prototype.setGroupFactor = function(groupfactor) {
 JavapoliStreet.prototype.getGroupFactor = function() {
 	return this.group_factor;
 };
+Javapoli.streetDefs.JavapoliStreet = JavapoliStreet;
+return Javapoli;
+})(Javapoli);
+
+
